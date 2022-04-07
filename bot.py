@@ -35,13 +35,22 @@ logger.info(
 )
 
 cogs = [i.replace(".py", "") for i in os.listdir("./cogs") if i.endswith(".py")]
+cogs_msg = [i.replace(".py", "") for i in os.listdir("./cogs_msg") if i.endswith(".py")]
+
 bot.load_extension("jishaku")
 logger.info(f"✅ | jishaku 로드 성공")
+
 for i in cogs:
     try:
         bot.load_extension(f"cogs.{i}")
         logger.info(f"✅ | cogs.{i} 로드 성공")
     except Exception as error:
         logger.error(f"❎ | cogs.{i} 로드 실패 {error}")
+for i in cogs_msg:
+    try:
+        bot.load_extension(f"cogs_msg.{i}")
+        logger.info(f"✅ | cogs_msg.{i} 로드 성공")
+    except Exception as error:
+        logger.error(f"❎ | cogs_msg.{i} 로드 실패 {error}")
 
 bot.run(config.bot.token if not config.test_mode else config.tbot.token)
