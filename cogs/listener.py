@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 
 import aiohttp
@@ -7,7 +8,6 @@ from discord.ext import commands
 
 import config
 
-import json
 
 class listener(commands.Cog):
     def __init__(self, bot):
@@ -71,8 +71,9 @@ class listener(commands.Cog):
                 self.logger.info(f"🚀 | 모든 유저가 채널을 퇴장하여 채널 이름 조회 불가({ch}) 채널이 삭제되었어요.")
                 del self.crvoice_data[str(ch)]
 
-        json.dump(self.crvoice_data, open("data/voice_channel.json", "w", encoding="UTF8"))
-
+        json.dump(
+            self.crvoice_data, open("data/voice_channel.json", "w", encoding="UTF8")
+        )
 
 
 def setup(bot):

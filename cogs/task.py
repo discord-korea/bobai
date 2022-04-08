@@ -1,14 +1,15 @@
 import datetime
 import logging
 import os
+from itertools import cycle
 
 import aiohttp
 import discord
+import revar
 from discord.ext import commands, tasks
 
 import config
-from itertools import cycle
-import revar
+
 
 class task(commands.Cog):
     def __init__(self, bot):
@@ -32,13 +33,24 @@ class task(commands.Cog):
         await self.bot.wait_until_ready()
         for shard in self.bot.shards.values():
             nowp = next(self.presences)
-            act_check = {'playing': discord.ActivityType.playing, 'watching': discord.ActivityType.watching}
-            activity_type = act_check[nowp['type']]
-            name = revar.replace(nowp['name'], {'{{서버}}': str(len(self.bot.guilds)), '{{유저}}': str(len(self.bot.users)), '{{샤드}}': str(shard.id+1)})
+            act_check = {
+                "playing": discord.ActivityType.playing,
+                "watching": discord.ActivityType.watching,
+                "listening": discord.ActivityType.listening,
+            }
+            activity_type = act_check[nowp["type"]]
+            name = revar.replace(
+                nowp["name"],
+                {
+                    "{{서버}}": str(len(self.bot.guilds)),
+                    "{{유저}}": str(len(self.bot.users)),
+                    "{{샤드}}": str(shard.id + 1),
+                },
+            )
             await self.bot.change_presence(
                 activity=discord.Activity(
-                    name = f"/정보 | {name}",
-                    type = activity_type,
+                    name=f"/정보 | {name}",
+                    type=activity_type,
                 ),
                 shard_id=shard.id,
             )
