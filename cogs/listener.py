@@ -7,6 +7,7 @@ from discord.ext import commands
 
 import config
 
+import json
 
 class listener(commands.Cog):
     def __init__(self, bot):
@@ -44,6 +45,34 @@ class listener(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.logger.info(f"🚥 | {self.bot.user}이(가) 준비되었습니다.")
+        with open("data/voice_channel.json", encoding="UTF8") as f:
+            self.crvoice_data = json.load(f)
+
+        for ch in self.crvoice_data.copy().keys():
+            voice_channel = self.bot.get_channel(int(ch))
+            if voice_channel:
+                members = voice_channel.members
+                users = []
+                for user in members:
+                    users.append(user)
+                if len(users) == 0:
+                    name = f"{voice_channel.name}({voice_channel.id})"
+                    try:
+                        await self.bot.get_channel(voice_channel.id).delete(
+                            reason=f"🚀 | 모든 유저가 채널을 퇴장하여 {name} 채널이 삭제되었어요."
+                        )
+                        self.logger.info(f"🚀 | 모든 유저가 채널을 퇴장하여 {name} 채널이 삭제되었어요.")
+                        del self.crvoice_data[str(voice_channel.id)]
+                    except Exception as error:
+                        self.logger.error(
+                            f"🚀 | {name} 채널 삭제 중, 오류가 발생했어요. (길드 : {voice_channel.guild.id} | 오류 : {error})"
+                        )
+            else:
+                self.logger.info(f"🚀 | 모든 유저가 채널을 퇴장하여 채널 이름 조회 불가({ch}) 채널이 삭제되었어요.")
+                del self.crvoice_data[str(ch)]
+
+        json.dump(self.crvoice_data, open("data/voice_channel.json", "w", encoding="UTF8"))
+
 
 
 def setup(bot):
