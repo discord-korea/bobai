@@ -95,7 +95,7 @@ class listener(commands.Cog):
             return
 
         elif isinstance(error, commands.MissingPermissions):
-            mps = ', '.join(ErrorTool.check_perm(perm=error.missing_permissions))
+            mps = ", ".join(ErrorTool.check_perm(perm=error.missing_permissions))
             embed = Embed.warn(
                 timestamp=datetime.datetime.now(), description="사용자의 권한이 부족해요."
             )
@@ -140,8 +140,7 @@ class listener(commands.Cog):
 
         else:
             embed = Embed.error(
-                timestamp=datetime.datetime.now(),
-                description="오류 코드는 ``ㅁㄴㅇㄹ``입니다."
+                timestamp=datetime.datetime.now(), description="오류 코드는 ``ㅁㄴㅇㄹ``입니다."
             )
 
         try:
