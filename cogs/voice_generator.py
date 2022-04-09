@@ -9,7 +9,7 @@ import config
 from utils.database import *
 
 
-class create_voice(commands.Cog):
+class voice_generator(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.logger = logging.getLogger(config.setting.log.name)
@@ -122,4 +122,4 @@ class create_voice(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(create_voice(bot))
+    bot.add_cog(voice_generator(bot))
