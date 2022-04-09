@@ -15,6 +15,7 @@ class create_voice(commands.Cog):
         self.logger = logging.getLogger(config.setting.log.name)
         with open("data/voice_channel.json", encoding="UTF8") as f:
             self.crvoice_data = json.load(f)
+        self.cool_users = []
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -56,6 +57,14 @@ class create_voice(commands.Cog):
                     users = []
                     for user in members:
                         if user.bot == False:
+                            if user.id in self.cool_users:
+                                try:
+                                    await user.send(
+                                        f"안녕하세요, {user.mention}!\n\n>>> {after.channel.mention} 생성기의 쿨타임이 적용되어 있어요.\n잠시 후 다시 입장해주세요."
+                                    )
+                                except:
+                                    pass
+                                return
                             try:
                                 voice_name = (
                                     await VOICE_GENERATOR_DB.channel_search(
@@ -88,6 +97,9 @@ class create_voice(commands.Cog):
                                     f"🚀 | {voice_name}({voice_channel.id}) 생성이 완료되었어요."
                                 )
                                 self.crvoice_data[str(new_channel.id)] = user.id
+                                self.cool_users.append(user.id)
+                                await asyncio.sleep(5)
+                                self.cool_users.remove(user.id)
                             except Exception as error:
                                 self.logger.error(
                                     f"🚀 | {user}님의 방 생성 중, 오류가 발생했어요. (길드 : {after.channel.guild.id} | 오류 : {error})"
