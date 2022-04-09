@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 import discord
@@ -5,6 +6,7 @@ from discord.commands import slash_command
 from discord.ext import commands
 
 import config
+from utils.embed import Embed
 
 
 class core(commands.Cog):
@@ -19,9 +21,9 @@ class core(commands.Cog):
     async def info(self, ctx):
         await ctx.interaction.response.defer()
 
-        embed = discord.Embed(
+        embed = Embed.default(
             title=f"{self.bot.user.name} 정보",
-            color=0x5865F2,
+            timestamp=datetime.datetime.now(),
         )
         embed.add_field(
             name="출시일",
@@ -35,6 +37,7 @@ class core(commands.Cog):
         embed.add_field(name="서버 수", value=f"``{format(len(self.bot.guilds), ',')}개``")
         embed.add_field(name="개발 팀", value=f"``삼해트의 공방``")
         embed.set_thumbnail(url=self.bot.user.display_avatar)
+        embed.set_footer(text=self.bot.user, icon_url=self.bot.user.display_avatar)
 
         view = discord.ui.View()
         view.add_item(
