@@ -104,6 +104,13 @@ class create_voice(commands.Cog):
                                 self.cool_users.append(user.id)
                                 await asyncio.sleep(5)
                                 self.cool_users.remove(user.id)
+                            except discord.Forbidden:
+                                try:
+                                    await user.send(
+                                        f"안녕하세요, {user.mention}!\n\n>>> 권한이 부족하여 ``음챗 생성기``를 사용할 수 없어요.\n해당 서버의 관리자에게 문의해주세요."
+                                    )
+                                except:
+                                    pass
                             except Exception as error:
                                 self.logger.error(
                                     f"🚀 | {user}님의 방 생성 중, 오류가 발생했어요. (길드 : {after.channel.guild.id} | 오류 : {error})"
