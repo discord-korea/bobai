@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import json
 import logging
 
@@ -7,6 +8,8 @@ import discord
 from discord.ext import commands
 
 import config
+from utils.embed import Embed
+from utils.tool import ErrorTool
 
 
 class listener(commands.Cog):
@@ -74,6 +77,77 @@ class listener(commands.Cog):
         json.dump(
             self.crvoice_data, open("data/voice_channel.json", "w", encoding="UTF8")
         )
+
+    @commands.Cog.listener()
+    async def on_application_command(self, ctx):
+        self.logger.info(f"💻 {ctx.author}({ctx.author.id}) - '/{ctx.command}' 명령어 사용")
+
+    @commands.Cog.listener()
+    async def on_application_command_error(self, ctx, error):
+        try:
+            error = error.original
+        except:
+            pass
+
+        print(error)
+
+        if isinstance(error, commands.CommandNotFound):
+            return
+
+        elif isinstance(error, commands.MissingPermissions):
+            mps = ', '.join(ErrorTool.check_perm(perm=error.missing_permissions))
+            embed = Embed.warn(
+                timestamp=datetime.datetime.now(), description="사용자의 권한이 부족해요."
+            )
+            embed.add_field(name="필요 권한", value=f"```{mps}```")
+            Embed.user_footer(embed, ctx.author)
+
+        elif isinstance(error, commands.NoPrivateMessage):
+            embed = Embed.warn(
+                timestamp=datetime.datetime.now(), description="서버에서만 사용 가능한 명령어에요."
+            )
+            Embed.user_footer(embed, ctx.author)
+
+        elif isinstance(error, commands.MaxConcurrencyReached):
+            embed = Embed.warn(
+                timestamp=datetime.datetime.now(), description="처리 대기중인 명령어가 있어요."
+            )
+            Embed.user_footer(embed, ctx.author)
+
+        elif isinstance(error, commands.DisabledCommand):
+            embed = Embed.warn(
+                timestamp=datetime.datetime.now(), description="비활성화된 명령어에요."
+            )
+            Embed.user_footer(embed, ctx.author)
+
+        elif isinstance(error, commands.CommandOnCooldown):
+            cooldown = int(error.retry_after)
+            hours = cooldown // 3600
+            minutes = (cooldown % 3600) // 60
+            seconds = cooldown % 60
+            time = []
+            if not hours == 0:
+                time.append(f"{hours}시간")
+            if not minutes == 0:
+                time.append(f"{minutes}분")
+            if not seconds == 0:
+                time.append(f"{seconds:02}초")
+            embed = Embed.warn(
+                timestamp=datetime.datetime.now(),
+                description=f"이 명령어는 ``{' '.join(time)}`` 뒤에 사용하실 수 있어요.",
+            )
+            Embed.user_footer(embed, ctx.author)
+
+        else:
+            embed = Embed.error(
+                timestamp=datetime.datetime.now(),
+                description="오류 코드는 ``ㅁㄴㅇㄹ``입니다."
+            )
+
+        try:
+            await ctx.respond(embed=embed, ephemeral=True)
+        except:
+            await ctx.reply(embed=embed, mention_author=False)
 
 
 def setup(bot):
