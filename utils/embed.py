@@ -1,5 +1,6 @@
 import discord
 
+
 class Embed:
     def default(title: str = None, description: str = None, **kwargs):
         embed = discord.Embed(**kwargs, color=0x5865F2)
