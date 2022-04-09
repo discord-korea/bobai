@@ -38,11 +38,11 @@ class create_voice(commands.Cog):
                     if len(users) == 0:
                         name = f"{before.channel.name}({before.channel.id})"
                         try:
+                            del self.crvoice_data[str(before.channel.id)]
                             await self.bot.get_channel(before.channel.id).delete(
                                 reason=f"🚀 | 모든 유저가 채널을 퇴장하여 {name} 채널이 삭제되었어요."
                             )
                             self.logger.info(f"🚀 | 모든 유저가 채널을 퇴장하여 {name} 채널이 삭제되었어요.")
-                            del self.crvoice_data[str(before.channel.id)]
                         except Exception as error:
                             self.logger.error(
                                 f"🚀 | {name} 채널 삭제 중, 오류가 발생했어요. (길드 : {before.channel.guild.id} | 오류 : {error})"
@@ -82,13 +82,17 @@ class create_voice(commands.Cog):
                                     new_channel = await voice_channel.category.create_voice_channel(
                                         name=voice_name,
                                         overwrites=voice_channel.overwrites,
+                                        bitrate=voice_channel.bitrate,
+                                        rtc_region=voice_channel.rtc_region,
+                                        video_quality_mode=voice_channel.video_quality_mode,
                                     )
                                 else:
-                                    new_channel = (
-                                        await voice_channel.guild.create_voice_channel(
-                                            name=voice_name,
-                                            overwrites=voice_channel.overwrites,
-                                        )
+                                    new_channel = await voice_channel.guild.create_voice_channel(
+                                        name=voice_name,
+                                        overwrites=voice_channel.overwrites,
+                                        bitrate=voice_channel.bitrate,
+                                        rtc_region=voice_channel.rtc_region,
+                                        video_quality_mode=voice_channel.video_quality_mode,
                                     )
                                 await user.move_to(
                                     new_channel, reason=f"🚀 | {user}님이 방 생성을 요청하셨어요."
