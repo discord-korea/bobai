@@ -50,5 +50,4 @@ class ErrorTool:
     }
 
     def check_perm(perm: list):
-        perm_result = [ErrorTool.perm_list[i] for i in perm]
-        return perm_result
+        return [ErrorTool.perm_list[i] for i in perm]
