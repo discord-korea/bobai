@@ -13,6 +13,7 @@ bot = bridge.AutoShardedBot(
     intents=discord.Intents.all(),
     owner_ids=config.setting.dev_ids,
     help_command=None,
+    allowed_mentions=discord.AllowedMentions(replied_user=False),
 )
 
 now = datetime.datetime.now()
