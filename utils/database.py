@@ -28,7 +28,7 @@ class GUILD_DB:
 
     async def guild_add(guild_id: int):
         """
-        서버 정보를 검색합니다.
+        서버를 추가합니다.
 
         Parameters
         ----------
@@ -37,6 +37,19 @@ class GUILD_DB:
         """
         return await client.guilds.insert_one(
             {"_id": guild_id, "generator_channel": {}}
+        )
+
+    async def guild_remove(guild_id: int):
+        """
+        서버를 제거합니다.
+
+        Parameters
+        ----------
+        guild_id: int
+            - 제거할 길드의 아이디를 입력합니다.
+        """
+        return await client.guilds.delete_one(
+            {"_id": guild_id}
         )
 
 
