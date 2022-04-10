@@ -24,7 +24,7 @@ class GUILD_DB:
         guild_id: int
             - 검색한 길드의 아이디를 입력합니다.
         """
-        return await client.guilds.find_one({"guild_id": guild_id})
+        return await client.guilds.find_one({"_id": guild_id})
 
     async def guild_add(guild_id: int):
         """
