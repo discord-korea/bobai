@@ -34,6 +34,13 @@ class setting:
 
     webhook_url = ""  # 봇 상태 알림을 위한 웹훅 주소를 입력해주세요. (없으면, 비워주세요.)
 
+    presences = [
+        {"type": "playing", "name": "{{서버}}개의 서버"},
+        {"type": "playing", "name": "{{유저}}명의 유저"},
+        {"type": "playing", "name": "샤드 #{{샤드}}"},
+        {"type": "listening", "name": "명령어"},
+    ]  # 바뀔 상태 메시지 목록을 입력해주세요. (type은 'playing', 'listening', 'watching'만 지원합니다.)
+
     class database:
         """
         MongoDB 데이터베이스 설정값입니다.
