@@ -1,3 +1,5 @@
+import asyncio
+
 class ErrorTool:
     perm_list = {
         "add_reaction": "반응 달기",
@@ -51,3 +53,28 @@ class ErrorTool:
 
     def check_perm(perm: list):
         return [ErrorTool.perm_list[i] for i in perm]
+
+class CheckTool:
+    async def button_check(ctx, msg):
+        async def check_for_msg(inter):
+            if (inter.user.id == ctx.author.id and inter.message.id == msg.id) is False:
+                await inter.followup.send(
+                    f"{inter.user.mention}, 이 버튼은 명령어를 사용하신 유저만 누를 수 있어요.",
+                    ephemeral=True,
+                )
+                return
+
+        def check(inter):
+            if (inter.user.id == ctx.author.id and inter.message.id == msg.id) is False:
+                asyncio.create_task(check_for_msg(inter))
+                return False
+            else:
+                return True
+
+        try:
+            interaction_check = await ctx.bot.wait_for(
+                "interaction", check=check, timeout=60.0
+            )
+            return interaction_check
+        except asyncio.TimeoutError:
+            return None
