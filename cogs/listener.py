@@ -78,21 +78,41 @@ class listener(commands.Cog):
             self.crvoice_data, open("data/voice_channel.json", "w", encoding="UTF8")
         )
 
-    @commands.Cog.listener()
-    async def on_application_command(self, ctx):
-        self.logger.info(f"💻 {ctx.author}({ctx.author.id}) - '/{ctx.command}' 명령어 사용")
+    @commands.Cog.listener("on_command")
+    @commands.Cog.listener("on_application_command")
+    async def command_usage_logging(self, ctx):
+        self.logger.info(f"💻 | {ctx.author}({ctx.author.id}) - '{ctx.command}' 명령어 사용")
+        with open("data/command_usages.json", encoding="UTF8") as f:
+            data = json.load(f)
 
-    @commands.Cog.listener()
-    async def on_application_command_error(self, ctx, error):
+        try:
+            data[str(ctx.command)] += 1
+        except KeyError:
+            data[str(ctx.command)] = 1
+        json.dump(
+            data,
+            open("data/command_usages.json", "w", encoding="UTF8"),
+            ensure_ascii=False,
+            indent=2,
+        )
+
+    @commands.Cog.listener("on_error")
+    @commands.Cog.listener("on_command_error")
+    @commands.Cog.listener("on_application_command_error")
+    async def command_error_handler(self, ctx, error):
         try:
             error = error.original
         except:
             pass
 
-        print(error)
-
         if isinstance(error, commands.CommandNotFound):
             return
+
+        elif isinstance(error, commands.NotOwner):
+            embed = Embed.warn(
+                timestamp=datetime.datetime.now(), description="사용자의 권한이 부족해요."
+            )
+            embed.add_field(name="필요 권한", value=f"```봇 개발자```")
 
         elif isinstance(error, commands.MissingPermissions):
             mps = ", ".join(ErrorTool.check_perm(perm=error.missing_permissions))
@@ -100,25 +120,21 @@ class listener(commands.Cog):
                 timestamp=datetime.datetime.now(), description="사용자의 권한이 부족해요."
             )
             embed.add_field(name="필요 권한", value=f"```{mps}```")
-            Embed.user_footer(embed, ctx.author)
 
         elif isinstance(error, commands.NoPrivateMessage):
             embed = Embed.warn(
                 timestamp=datetime.datetime.now(), description="서버에서만 사용 가능한 명령어에요."
             )
-            Embed.user_footer(embed, ctx.author)
 
         elif isinstance(error, commands.MaxConcurrencyReached):
             embed = Embed.warn(
                 timestamp=datetime.datetime.now(), description="처리 대기중인 명령어가 있어요."
             )
-            Embed.user_footer(embed, ctx.author)
 
         elif isinstance(error, commands.DisabledCommand):
             embed = Embed.warn(
                 timestamp=datetime.datetime.now(), description="비활성화된 명령어에요."
             )
-            Embed.user_footer(embed, ctx.author)
 
         elif isinstance(error, commands.CommandOnCooldown):
             cooldown = int(error.retry_after)
@@ -136,17 +152,19 @@ class listener(commands.Cog):
                 timestamp=datetime.datetime.now(),
                 description=f"이 명령어는 ``{' '.join(time)}`` 뒤에 사용하실 수 있어요.",
             )
-            Embed.user_footer(embed, ctx.author)
 
         else:
             embed = Embed.error(
-                timestamp=datetime.datetime.now(), description="오류 코드는 ``ㅁㄴㅇㄹ``입니다."
+                timestamp=datetime.datetime.now(), description="오류 코드는 ``(대충코드)``입니다."
             )
+            print(error)
+
+        Embed.user_footer(embed, ctx.author)
 
         try:
             await ctx.respond(embed=embed, ephemeral=True)
         except:
-            await ctx.reply(embed=embed, mention_author=False)
+            await ctx.respond(embed=embed)
 
 
 def setup(bot):
