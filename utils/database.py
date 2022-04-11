@@ -1,4 +1,5 @@
 import asyncio
+import string
 
 import motor.motor_asyncio
 
@@ -105,3 +106,68 @@ class VOICE_GENERATOR_DB:
         await client.guilds.update_one(
             {"_id": guild_id}, {"$set": {"generator_channel": find_data}}
         )
+
+
+class ERROR_DB:
+    """
+    오류 처리 관련 데이터베이스 유틸입니다.
+    """
+
+    async def search(code: str):
+        """
+        데이터베이스에 오류 로그를 검색합니다.
+
+        Parameters
+        ----------
+        code: str
+            - 오류 코드를 str로 입력합니다.
+        """
+
+        return await client.errors.find_one({"_id": code})
+
+    async def add(ctx, error: str):
+        """
+        데이터베이스에 오류 로그를 추가합니다.
+
+        Parameters
+        ----------
+        ctx
+            - 그냥 봇 쓸 때 ctx 입력하면 됩니다. (discord.Context)
+        error: str
+            - 오류 내용을 str형식으로 입력합니다.
+        """
+
+        while True:
+            string_pool = string.ascii_letters + string.digits
+            error_id = ""
+
+            for sul in range(8):
+                error_id += random.choice(string_pool)
+
+            if (await ERROR_DB.search(error_id)) is None:
+                break
+
+        return await client.errors.insert_one(
+            {
+                "_id": error_id,
+                "info": {
+                    "guild_id": ctx.guild.id,
+                    "channel_id": ctx.channel.id,
+                    "user_id": ctx.author.id,
+                    "command": ctx.command,
+                },
+                "error": error,
+            }
+        )
+
+    async def delete(code: str):
+        """
+        데이터베이스의 오류 로그를 삭제합니다.
+
+        Parameters
+        ----------
+        code: str
+            - 오류 코드를 str로 입력합니다.
+        """
+
+        return await client.errors.delete_one({"_id": code})
