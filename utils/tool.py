@@ -1,4 +1,5 @@
 import asyncio
+import discord
 
 
 class ErrorTool:
