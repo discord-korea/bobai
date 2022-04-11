@@ -65,11 +65,13 @@ class CheckTool:
                 return
 
         def check(inter):
-            if (inter.user.id == ctx.author.id and inter.message.id == msg.id) is False:
-                asyncio.create_task(check_for_msg(inter))
-                return False
-            else:
-                return True
+            if inter.type == discord.InteractionType.component:
+                if (inter.user.id == ctx.author.id and inter.message.id == msg.id) is False:
+                    asyncio.create_task(check_for_msg(inter))
+                    return False
+                else:
+                    return True
+            else: return False
 
         try:
             interaction_check = await ctx.bot.wait_for(
