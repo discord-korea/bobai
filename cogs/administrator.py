@@ -103,7 +103,7 @@ class administrator(commands.Cog):
 
     @bridge.bridge_command(
         name="비활성화",
-        description="[🔒 '서버 관리자' 전용] 뽀빠이 서비스를 이 서버에서 활성화해요.",
+        description="[🔒 '서버 관리자' 전용] 뽀빠이 서비스를 이 서버에서 비활성화해요.",
     )
     @commands.has_permissions(administrator=True)
     @commands.max_concurrency(1, commands.BucketType.guild)
