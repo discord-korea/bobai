@@ -100,7 +100,6 @@ class administrator(commands.Cog):
             Embed.user_footer(embed, ctx.author)
             return await msg.edit(embed=embed, view=None)
 
-
     @bridge.bridge_command(
         name="비활성화",
         description="[🔒 '서버 관리자' 전용] 뽀빠이 서비스를 이 서버에서 비활성화해요.",
@@ -179,6 +178,7 @@ class administrator(commands.Cog):
             )
             Embed.user_footer(embed, ctx.author)
             return await msg.edit(embed=embed, view=None)
+
 
 def setup(bot):
     bot.add_cog(administrator(bot))

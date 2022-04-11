@@ -1,5 +1,6 @@
 import asyncio
 
+
 class ErrorTool:
     perm_list = {
         "add_reaction": "반응 달기",
@@ -54,6 +55,7 @@ class ErrorTool:
     def check_perm(perm: list):
         return [ErrorTool.perm_list[i] for i in perm]
 
+
 class CheckTool:
     async def button_check(ctx, msg):
         async def check_for_msg(inter):
@@ -66,12 +68,15 @@ class CheckTool:
 
         def check(inter):
             if inter.type == discord.InteractionType.component:
-                if (inter.user.id == ctx.author.id and inter.message.id == msg.id) is False:
+                if (
+                    inter.user.id == ctx.author.id and inter.message.id == msg.id
+                ) is False:
                     asyncio.create_task(check_for_msg(inter))
                     return False
                 else:
                     return True
-            else: return False
+            else:
+                return False
 
         try:
             interaction_check = await ctx.bot.wait_for(

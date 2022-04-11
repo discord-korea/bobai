@@ -48,9 +48,7 @@ class GUILD_DB:
         guild_id: int
             - 제거할 길드의 아이디를 입력합니다.
         """
-        return await client.guilds.delete_one(
-            {"_id": guild_id}
-        )
+        return await client.guilds.delete_one({"_id": guild_id})
 
 
 class VOICE_GENERATOR_DB:
