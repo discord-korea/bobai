@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import json
 import logging
+import traceback
 
 import aiohttp
 import discord
@@ -10,6 +11,7 @@ from discord.ext import commands
 import config
 from utils.embed import Embed
 from utils.tool import ErrorTool
+from utils.database import ERROR_DB
 
 
 class listener(commands.Cog):
@@ -154,10 +156,13 @@ class listener(commands.Cog):
             )
 
         else:
+            tb = traceback.format_exception(type(error), error, error.__traceback__)
+            err = [line.rstrip() for line in tb]
+            errstr = "\n".join(err)
+            code = await ERROR_DB.add(ctx, errstr)
             embed = Embed.error(
-                timestamp=datetime.datetime.now(), description="오류 코드는 ``(대충코드)``입니다."
+                timestamp=datetime.datetime.now(), description=f"아래의 정보를 [``삼해트의 공방 문의 채널``](https://discord.gg/TD9BvMxhP6)로 보내주시면 개발에 도움이 됩니다.\n\n>>> 오류 코드 : ``{code['id']}``"
             )
-            print(error)
 
         Embed.user_footer(embed, ctx.author)
 
