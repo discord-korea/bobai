@@ -1,5 +1,7 @@
 import asyncio
 import string
+import random
+import datetime
 
 import motor.motor_asyncio
 
@@ -147,18 +149,21 @@ class ERROR_DB:
             if (await ERROR_DB.search(error_id)) is None:
                 break
 
-        return await client.errors.insert_one(
+        await client.errors.insert_one(
             {
                 "_id": error_id,
                 "info": {
                     "guild_id": ctx.guild.id,
                     "channel_id": ctx.channel.id,
                     "user_id": ctx.author.id,
-                    "command": ctx.command,
+                    "command": str(ctx.command),
+                    "datetime": datetime.datetime.now()
                 },
                 "error": error,
             }
         )
+
+        return {'id': error_id}
 
     async def delete(code: str):
         """
