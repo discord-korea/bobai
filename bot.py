@@ -35,7 +35,7 @@ logger.info(
     f"📡 | 봇 익스텐션을 로드합니다. (모드 : {'정식 모드' if not config.test_mode else '테스트 모드'})"
 )
 
-cogs = [i.replace(".py", "") for i in os.listdir("./cogs") if i.endswith(".py")]
+cogs = sorted([i.replace(".py", "") for i in os.listdir("./cogs") if i.endswith(".py")])
 
 bot.load_extension("jishaku")
 logger.info(f"✅ | jishaku 로드 성공")
