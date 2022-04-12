@@ -1,7 +1,7 @@
 import asyncio
-import string
-import random
 import datetime
+import random
+import string
 
 import motor.motor_asyncio
 
@@ -157,13 +157,13 @@ class ERROR_DB:
                     "channel_id": ctx.channel.id,
                     "user_id": ctx.author.id,
                     "command": str(ctx.command),
-                    "datetime": datetime.datetime.now()
+                    "datetime": datetime.datetime.now(),
                 },
                 "error": error,
             }
         )
 
-        return {'id': error_id}
+        return {"id": error_id}
 
     async def delete(code: str):
         """

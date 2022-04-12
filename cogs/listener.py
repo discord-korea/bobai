@@ -9,9 +9,9 @@ import discord
 from discord.ext import commands
 
 import config
+from utils.database import ERROR_DB
 from utils.embed import Embed
 from utils.tool import ErrorTool
-from utils.database import ERROR_DB
 
 
 class listener(commands.Cog):
@@ -161,7 +161,8 @@ class listener(commands.Cog):
             errstr = "\n".join(err)
             code = await ERROR_DB.add(ctx, errstr)
             embed = Embed.error(
-                timestamp=datetime.datetime.now(), description=f"아래의 정보를 [``삼해트의 공방 문의 채널``](https://discord.gg/TD9BvMxhP6)로 보내주시면 개발에 도움이 됩니다.\n\n>>> 오류 코드 : ``{code['id']}``"
+                timestamp=datetime.datetime.now(),
+                description=f"아래의 정보를 [``삼해트의 공방 문의 채널``](https://discord.gg/TD9BvMxhP6)로 보내주시면 개발에 도움이 됩니다.\n\n>>> 오류 코드 : ``{code['id']}``",
             )
 
         Embed.user_footer(embed, ctx.author)
