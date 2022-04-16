@@ -45,6 +45,7 @@ class task(commands.Cog):
                     "{{서버}}": str(len(self.bot.guilds)),
                     "{{유저}}": str(len(self.bot.users)),
                     "{{샤드}}": str(shard.id + 1),
+                    "{{개발자}}": ', '.join([str(self.bot.get_user(i)) for i in self.bot.owner_ids]),
                 },
             )
             await self.bot.change_presence(
