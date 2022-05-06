@@ -4,11 +4,11 @@ import os
 
 import discord
 import jishaku
-from discord.ext import bridge
+from discord.ext import commands
 
 import config
 
-bot = bridge.AutoShardedBot(
+bot = commands.AutoShardedBot(
     command_prefix=(config.bot.prefix if not config.test_mode else config.tbot.prefix),
     intents=discord.Intents.all(),
     owner_ids=config.setting.dev_ids,

@@ -4,7 +4,7 @@ import logging
 
 import discord
 from discord.commands import slash_command
-from discord.ext import bridge, commands
+from discord.ext import commands
 
 import config
 from utils.database import *
@@ -17,7 +17,7 @@ class administrator(commands.Cog):
         self.bot = bot
         self.logger = logging.getLogger(config.setting.log.name)
 
-    @bridge.bridge_command(
+    @commands.slash_command(
         name="활성화",
         description="[🔒 '서버 관리자' 전용] 뽀빠이 서비스를 이 서버에서 활성화해요.",
     )
@@ -100,7 +100,7 @@ class administrator(commands.Cog):
             Embed.user_footer(embed, ctx.author)
             return await msg.edit(embed=embed, view=None)
 
-    @bridge.bridge_command(
+    @commands.slash_command(
         name="비활성화",
         description="[🔒 '서버 관리자' 전용] 뽀빠이 서비스를 이 서버에서 비활성화해요.",
     )

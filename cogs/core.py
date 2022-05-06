@@ -3,7 +3,7 @@ import logging
 
 import discord
 from discord.commands import slash_command
-from discord.ext import bridge, commands
+from discord.ext import commands
 
 import config
 from utils.embed import Embed
@@ -14,7 +14,7 @@ class core(commands.Cog):
         self.bot = bot
         self.logger = logging.getLogger(config.setting.log.name)
 
-    @bridge.bridge_command(
+    @commands.slash_command(
         name="정보",
         description="'뽀빠이' 봇의 정보를 확인해보세요!",
     )
