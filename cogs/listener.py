@@ -155,10 +155,14 @@ class listener(commands.Cog):
                 description=f"이 명령어는 ``{' '.join(time)}`` 뒤에 사용하실 수 있어요.",
             )
 
+        elif isinstance(error, commands.CheckFailure) or isinstance(error, commands.CheckAnyFailure):
+            return
+
         else:
             tb = traceback.format_exception(type(error), error, error.__traceback__)
             err = [line.rstrip() for line in tb]
             errstr = "\n".join(err)
+            print(errstr)
             code = await ERROR_DB.add(ctx, errstr)
             embed = Embed.error(
                 timestamp=datetime.datetime.now(),
