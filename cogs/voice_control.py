@@ -60,12 +60,16 @@ class voice_control(commands.Cog):
 
         with open("data/voice_channel.json", encoding="UTF8") as f:
             crvoice_data = json.load(f)
-        
+
         if not str(ctx.author.voice.channel.id) in crvoice_data.copy().keys():
-            return await ctx.respond(f"❌ | 이 채널({ctx.author.voice.channel.mention})은 ``음챗 생성기``를 통해 생성된 채널이 아니에요.")
+            return await ctx.respond(
+                f"❌ | 이 채널({ctx.author.voice.channel.mention})은 ``음챗 생성기``를 통해 생성된 채널이 아니에요."
+            )
 
         overwrite = ctx.author.voice.channel.overwrites_for(ctx.guild.default_role)
-        await ctx.author.voice.channel.set_permissions(ctx.bot.user, manage_channels=True, manage_permissions=True, connect=True)
+        await ctx.author.voice.channel.set_permissions(
+            ctx.bot.user, manage_channels=True, manage_permissions=True, connect=True
+        )
         if overwrite.connect:
             lock_enabled = True
             for perm in ctx.author.voice.channel.overwrites:
@@ -79,17 +83,25 @@ class voice_control(commands.Cog):
                 if perm.id == self.bot.user.id:
                     pass
                 else:
-                    await ctx.author.voice.channel.set_permissions(perm, connect=True, speak=True)
-        await ctx.respond(f"✅ | ``음챗 생성기``를 통해 생성된 채널의 잠금이 ``{'활성화' if lock_enabled else '비활성화'}``되었어요.")
+                    await ctx.author.voice.channel.set_permissions(
+                        perm, connect=True, speak=True
+                    )
+        await ctx.respond(
+            f"✅ | ``음챗 생성기``를 통해 생성된 채널의 잠금이 ``{'활성화' if lock_enabled else '비활성화'}``되었어요."
+        )
 
     @user_perm.command(
         name="추가",
         description="[🔒 음챗 잠금 필요] '음챗 생성기'를 통해 생성된 채널에 유저의 입장 권한을 추가해요.",
         checks=[channel_check],
     )
-    async def user_perm_add_user(self, ctx, user: Option(discord.User, "추가할 유저를 입력해주세요.", required=True, name="유저")):
+    async def user_perm_add_user(
+        self,
+        ctx,
+        user: Option(discord.User, "추가할 유저를 입력해주세요.", required=True, name="유저"),
+    ):
         await ctx.defer(ephemeral=True)
-        
+
         overwrite = ctx.author.voice.channel.overwrites_for(ctx.guild.default_role)
         if overwrite.connect:
             return await ctx.respond("❌ | 잠금 처리되지 않은 채널입니다.")
@@ -102,7 +114,11 @@ class voice_control(commands.Cog):
         description="[🔒 음챗 잠금 필요] '음챗 생성기'를 통해 생성된 채널에 유저의 입장 권한을 제거해요.",
         checks=[channel_check],
     )
-    async def user_perm_remove_user(self, ctx, user: Option(discord.User, "제거할 유저를 입력해주세요.", required=True, name="유저")):
+    async def user_perm_remove_user(
+        self,
+        ctx,
+        user: Option(discord.User, "제거할 유저를 입력해주세요.", required=True, name="유저"),
+    ):
         await ctx.defer(ephemeral=True)
 
         overwrite = ctx.author.voice.channel.overwrites_for(ctx.guild.default_role)

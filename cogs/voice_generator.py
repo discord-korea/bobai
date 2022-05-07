@@ -94,7 +94,13 @@ class voice_generator(commands.Cog):
                                         rtc_region=voice_channel.rtc_region,
                                         video_quality_mode=voice_channel.video_quality_mode,
                                     )
-                                await new_channel.set_permissions(self.bot.user, manage_channels=True, manage_permissions=True, connect=True, view_channel=True)
+                                await new_channel.set_permissions(
+                                    self.bot.user,
+                                    manage_channels=True,
+                                    manage_permissions=True,
+                                    connect=True,
+                                    view_channel=True,
+                                )
                                 await user.move_to(
                                     new_channel, reason=f"🚀 | {user}님이 방 생성을 요청하셨어요."
                                 )
