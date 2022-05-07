@@ -99,13 +99,22 @@ class voice_control(commands.Cog):
 
     @user_perm.command(
         name="제거",
-        description="",
+        description="[🔒 음챗 잠금 필요] '음챗 생성기'를 통해 생성된 채널에 유저의 입장 권한을 제거해요.",
         checks=[channel_check],
     )
     async def user_perm_remove_user(self, ctx, user: Option(discord.User, "제거할 유저를 입력해주세요.", required=True, name="유저")):
         await ctx.defer(ephemeral=True)
 
         overwrite = ctx.author.voice.channel.overwrites_for(ctx.guild.default_role)
+        if overwrite.connect:
+            return await ctx.respond("❌ | 잠금 처리되지 않은 채널입니다.")
+
+        overwriteForUser = ctx.author.voice.channel.overwrites_for(user)
+        if not overwriteForUser.connect:
+            return await ctx.respond("❌ | 해당 유저에게 권한이 부여되지 않았습니다.")
+
+        await ctx.author.voice.channel.set_permissions(user, overwrite=None)
+        await ctx.respond(f"✅ | {user}님을 {ctx.author.voice.channel.mention}에서 제거하셨습니다!")
 
 
 def setup(bot):
