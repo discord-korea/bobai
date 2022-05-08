@@ -163,7 +163,7 @@ class listener(commands.Cog):
             err = [line.rstrip() for line in tb]
             errstr = "\n".join(err)
             print(errstr)
-            code = await ERROR_DB.add(ctx, errstr)
+            code = await ERROR_DB.add(ctx.guild.id, ctx.channel.id, ctx.author.id, str(ctx.command), errstr)
             embed = Embed.error(
                 timestamp=datetime.datetime.now(),
                 description=f"아래의 정보를 [``삼해트의 공방 문의 채널``](https://discord.gg/TD9BvMxhP6)로 보내주시면 개발에 도움이 됩니다.\n\n>>> 오류 코드 : ``{code['id']}``",
