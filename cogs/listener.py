@@ -155,7 +155,7 @@ class listener(commands.Cog):
                 description=f"이 명령어는 ``{' '.join(time)}`` 뒤에 사용하실 수 있어요.",
             )
 
-        elif isinstance(error, commands.CheckFailure) or isinstance(error, commands.CheckAnyFailure):
+        elif isinstance(error, discord.errors.CheckFailure):
             return
 
         else:
