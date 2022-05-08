@@ -127,7 +127,9 @@ class ERROR_DB:
 
         return await client.errors.find_one({"_id": code})
 
-    async def add(guild_id: int, channel_id: int, user_id:int, command: str, error: str):
+    async def add(
+        guild_id: int, channel_id: int, user_id: int, command: str, error: str
+    ):
         """
         데이터베이스에 오류 로그를 추가합니다.
 
