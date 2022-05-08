@@ -127,14 +127,20 @@ class ERROR_DB:
 
         return await client.errors.find_one({"_id": code})
 
-    async def add(ctx, error: str):
+    async def add(guild_id: int, channel_id: int, user_id:int, command: str, error: str):
         """
         데이터베이스에 오류 로그를 추가합니다.
 
         Parameters
         ----------
-        ctx
-            - 그냥 봇 쓸 때 ctx 입력하면 됩니다. (discord.Context)
+        guild_id: int
+            - 오류가 발생한 서버의 아이디를 입력합니다.
+        channel_id: int
+            - 오류가 발생한 채널의 아이디를 입력합니다.
+        user_id: int
+            - 오류를 발생시킨 유저의 아이디를 입력합니다.
+        command: str
+            - 오류가 발생한 명령어를 입력합니다.
         error: str
             - 오류 내용을 str형식으로 입력합니다.
         """
@@ -153,10 +159,10 @@ class ERROR_DB:
             {
                 "_id": error_id,
                 "info": {
-                    "guild_id": ctx.guild.id,
-                    "channel_id": ctx.channel.id,
-                    "user_id": ctx.author.id,
-                    "command": str(ctx.command),
+                    "guild_id": guild_id,
+                    "channel_id": channel_id,
+                    "user_id": user_id,
+                    "command": command,
                     "datetime": datetime.datetime.now(),
                 },
                 "error": error,
