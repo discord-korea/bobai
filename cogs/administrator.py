@@ -201,6 +201,7 @@ class administrator(commands.Cog):
     @commands.max_concurrency(1, commands.BucketType.guild)
     @commands.guild_only()
     async def voice_create_list(self, ctx):
+        await ctx.defer()
         data = (await GUILD_DB.guild_search(ctx.guild.id))["generator_channel"]
         embed = Embed.default(title=f"📃 {ctx.guild.name} 음성 생성기 목록", description=f"현재 총 ``{len(data)}개``의 음성 생성기가 등록되어 있어요.")
         Embed.user_footer(embed, ctx.author)
