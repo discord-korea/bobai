@@ -101,6 +101,11 @@ class voice_generator(commands.Cog):
                                     connect=True,
                                     view_channel=True,
                                 )
+                                await new_channel.set_permissions(
+                                    user,
+                                    connect=True,
+                                    speak=True,
+                                )
                                 await user.move_to(
                                     new_channel, reason=f"🚀 | {user}님이 방 생성을 요청하셨어요."
                                 )
@@ -109,7 +114,7 @@ class voice_generator(commands.Cog):
                                 )
                                 self.crvoice_data[str(new_channel.id)] = user.id
                                 self.cool_users.append(user.id)
-                                await asyncio.sleep(5)
+                                await asyncio.sleep(10)
                                 self.cool_users.remove(user.id)
                             except discord.Forbidden:
                                 try:
