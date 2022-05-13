@@ -17,6 +17,13 @@ class voice_generator(commands.Cog):
             self.crvoice_data = json.load(f)
         self.cool_users = []
 
+"""
+data/voice_channel.json example
+
+{'channel_id': {'owner': user_id, 'members': [user_id, user_id, ...]}}
+
+"""
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if before.channel != after.channel:
