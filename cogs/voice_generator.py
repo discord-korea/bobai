@@ -9,6 +9,13 @@ from discord.ext import commands
 import config
 from utils.database import *
 
+"""
+data/voice_channel.json example
+
+{'channel_id': {'owner': user_id, 'members': [user_id, user_id, ...]}}
+
+"""
+
 
 class voice_generator(commands.Cog):
     def __init__(self, bot):
@@ -17,13 +24,6 @@ class voice_generator(commands.Cog):
         with open("data/voice_channel.json", encoding="UTF8") as f:
             self.crvoice_data = json.load(f)
         self.cool_users = []
-
-"""
-data/voice_channel.json example
-
-{'channel_id': {'owner': user_id, 'members': [user_id, user_id, ...]}}
-
-"""
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -120,7 +120,10 @@ data/voice_channel.json example
                                 self.logger.info(
                                     f"🚀 | {voice_name}({voice_channel.id}) 생성이 완료되었어요."
                                 )
-                                self.crvoice_data[str(new_channel.id)] = {'owner': user.id, 'members': [user.id]}
+                                self.crvoice_data[str(new_channel.id)] = {
+                                    "owner": user.id,
+                                    "members": [user.id],
+                                }
                                 self.cool_users.append(user.id)
                                 await asyncio.sleep(10)
                                 self.cool_users.remove(user.id)
@@ -135,11 +138,17 @@ data/voice_channel.json example
                                 self.logger.error(
                                     f"🚀 | {user}님의 방 생성 중, 오류가 발생했어요. (길드 : {after.channel.guild.id} | 오류 : {error})"
                                 )
-                                tb = traceback.format_exception(type(error), error, error.__traceback__)
+                                tb = traceback.format_exception(
+                                    type(error), error, error.__traceback__
+                                )
                                 err = [line.rstrip() for line in tb]
                                 errstr = "\n".join(err)
                                 code = await ERROR_DB.add(
-                                    after.channel.guild.id, after.channel.id, user.id, "음챗 생성 기능", errstr
+                                    after.channel.guild.id,
+                                    after.channel.id,
+                                    user.id,
+                                    "음챗 생성 기능",
+                                    errstr,
                                 )
 
                                 try:
