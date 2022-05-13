@@ -63,6 +63,17 @@ class voice_control(commands.Cog):
                 ephemeral=True,
             )
             return False
+        elif not crvoice_data[str(self.author.voice_channel.id)] == self.author.id:
+            failEmbed = embed = Embed.cancel(
+                description=f"이 채널({self.author.voice.channel.mention})은 <@{crvoice_data[str(self.author.voice_channel.id)]}>님이 생성한 채널이에요.",
+                timestamp=datetime.datetime.now(),
+            )
+            Embed.user_footer(failEmbed, self.author)
+            await self.respond(
+                embed=failEmbed,
+                ephemeral=True,
+            )
+            return False
         else:
             return True
 
