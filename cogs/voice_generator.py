@@ -1,5 +1,6 @@
 import json
 import logging
+import traceback
 
 import discord
 import revar
@@ -119,7 +120,7 @@ data/voice_channel.json example
                                 self.logger.info(
                                     f"🚀 | {voice_name}({voice_channel.id}) 생성이 완료되었어요."
                                 )
-                                self.crvoice_data[str(new_channel.id)] = user.id
+                                self.crvoice_data[str(new_channel.id)] = {'owner': user.id, 'members': [user.id]}
                                 self.cool_users.append(user.id)
                                 await asyncio.sleep(10)
                                 self.cool_users.remove(user.id)
@@ -134,6 +135,29 @@ data/voice_channel.json example
                                 self.logger.error(
                                     f"🚀 | {user}님의 방 생성 중, 오류가 발생했어요. (길드 : {after.channel.guild.id} | 오류 : {error})"
                                 )
+                                tb = traceback.format_exception(type(error), error, error.__traceback__)
+                                err = [line.rstrip() for line in tb]
+                                errstr = "\n".join(err)
+                                code = await ERROR_DB.add(
+                                    after.channel.guild.id, after.channel.id, user.id, "음챗 생성 기능", errstr
+                                )
+
+                                try:
+                                    view = discord.ui.View()
+                                    view.add_item(
+                                        discord.ui.Button(
+                                            label="서포트 서버 (삼해트의 공방)",
+                                            emoji="<:discord_blurple:858642003327057930>",
+                                            style=discord.ButtonStyle.link,
+                                            url="https://discord.gg/TD9BvMxhP6",
+                                        )
+                                    )
+                                    await user.send(
+                                        f"안녕하세요, {user.mention}!\n\n>>> {user}님의 방 생성 중, 오류가 발생했어요.\n삼해트의 공방 ``#문의`` 채널에서 문의해주세요!\n- 오류 코드 : ``{code['id']}``",
+                                        view=view,
+                                    )
+                                except:
+                                    pass
 
             json.dump(
                 self.crvoice_data, open("data/voice_channel.json", "w", encoding="UTF8")
