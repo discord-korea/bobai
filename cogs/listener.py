@@ -162,7 +162,6 @@ class listener(commands.Cog):
             tb = traceback.format_exception(type(error), error, error.__traceback__)
             err = [line.rstrip() for line in tb]
             errstr = "\n".join(err)
-            print(errstr)
             code = await ERROR_DB.add(
                 ctx.guild.id, ctx.channel.id, ctx.author.id, str(ctx.command), errstr
             )
