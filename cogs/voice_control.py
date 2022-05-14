@@ -64,11 +64,11 @@ class voice_control(commands.Cog):
             )
             return False
         elif (
-            not crvoice_data[str(self.author.voice_channel.id)]["owner"]
+            not crvoice_data[str(self.author.voice.channel.id)]["owner"]
             == self.author.id
         ):
             failEmbed = embed = Embed.cancel(
-                description=f"이 채널({self.author.voice.channel.mention})은 <@{crvoice_data[str(self.author.voice_channel.id)]}>님이 생성한 채널이에요.",
+                description=f"이 채널({self.author.voice.channel.mention})은 <@{crvoice_data[str(self.author.voice.channel.id)]['owner']}>님이 생성한 채널이에요.",
                 timestamp=datetime.datetime.now(),
             )
             Embed.user_footer(failEmbed, self.author)
