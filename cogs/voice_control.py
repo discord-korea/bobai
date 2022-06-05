@@ -68,7 +68,7 @@ class voice_control(commands.Cog):
             == self.author.id
         ):
             failEmbed = embed = Embed.cancel(
-                description=f"이 채널({self.author.voice.channel.mention})은 <@{crvoice_data[str(self.author.voice.channel.id)]['owner']}>님이 생성한 채널이에요.",
+                description=f"이 명령어를 사용할 권한이 없어요.\n🚧 이 채널({self.author.voice.channel.mention})은 <@{crvoice_data[str(self.author.voice.channel.id)]['owner']}>님이 생성한 채널이에요.",
                 timestamp=datetime.datetime.now(),
             )
             Embed.user_footer(failEmbed, self.author)
@@ -117,6 +117,10 @@ class voice_control(commands.Cog):
             ctx.bot.user, manage_channels=True, manage_permissions=True, connect=True
         )
         overwrite = ctx.author.voice.channel.overwrites_for(ctx.guild.default_role)
+        
+        with open("data/voice_channel.json", encoding="UTF8") as f:
+            crvoice_data = json.load(f)
+
         if overwrite.connect or overwrite.connect is None:
             lock_enabled = True
             for perm in ctx.author.voice.channel.overwrites:
@@ -124,15 +128,23 @@ class voice_control(commands.Cog):
                     pass
                 else:
                     await ctx.author.voice.channel.set_permissions(perm, connect=False)
+                    crvoice_data[str(ctx.author.voice.channel.id)]["members"].append(user.id)
+
         else:
             lock_enabled = False
             for perm in ctx.author.voice.channel.overwrites:
-                if perm.id == self.bot.user.id:
+                if perm.id == self.bot.user.id or perm.id == ctx.author.id:
                     pass
                 else:
                     await ctx.author.voice.channel.set_permissions(
                         perm, connect=True, speak=True
                     )
+            crvoice_data[str(ctx.author.voice.channel.id)]["members"] = [ctx.author.id]
+
+        json.dump(
+            crvoice_data, open("data/voice_channel.json", "w", encoding="UTF8")
+        )
+
         successEmbed = Embed.default(
             title="✅ 설정 완료",
             description=f"``음챗 생성기``를 통해 생성된 채널의 잠금이 ``{'활성화' if lock_enabled else '비활성화'}``되었어요.",
@@ -159,6 +171,10 @@ class voice_control(commands.Cog):
             )
             Embed.user_footer(failEmbed, ctx.author)
             return await ctx.respond(embed=failEmbed)
+
+        with open("data/voice_channel.json", encoding="UTF8") as f:
+            crvoice_data = json.load(f)
+
         overwriteForUser = ctx.author.voice.channel.overwrites_for(user)
         if overwriteForUser.connect:
             failEmbed = Embed.cancel(
@@ -174,6 +190,13 @@ class voice_control(commands.Cog):
             timestamp=datetime.datetime.now(),
         )
         Embed.user_footer(successEmbed, ctx.author)
+
+        crvoice_data[str(ctx.author.voice.channel.id)]["members"].append(user.id)
+
+        json.dump(
+            crvoice_data, open("data/voice_channel.json", "w", encoding="UTF8")
+        )
+
         await ctx.respond(embed=successEmbed)
 
     @user_perm.command(
@@ -194,6 +217,10 @@ class voice_control(commands.Cog):
             )
             Embed.user_footer(failEmbed, ctx.author)
             return await ctx.respond(embed=failEmbed)
+
+        with open("data/voice_channel.json", encoding="UTF8") as f:
+            crvoice_data = json.load(f)
+
         overwriteForUser = ctx.author.voice.channel.overwrites_for(user)
         if not overwriteForUser.connect:
             failEmbed = Embed.cancel(
@@ -209,6 +236,13 @@ class voice_control(commands.Cog):
             timestamp=datetime.datetime.now(),
         )
         Embed.user_footer(successEmbed, ctx.author)
+
+        crvoice_data[str(ctx.author.voice.channel.id)]["members"].remove(user.id)
+
+        json.dump(
+            crvoice_data, open("data/voice_channel.json", "w", encoding="UTF8")
+        )
+
         await ctx.respond(embed=successEmbed)
 
 
