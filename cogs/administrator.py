@@ -3,7 +3,7 @@ import datetime
 import logging
 
 import discord
-from discord.commands import SlashCommandGroup, slash_command
+from discord.commands import SlashCommandGroup, slash_command, Option
 from discord.ext import commands
 
 import config
@@ -229,6 +229,39 @@ class administrator(commands.Cog):
 
         await ctx.respond(embed=embed)
 
+    @voice_create.command(
+        name="생성",
+        description="[🔒 '서버 관리자' 전용] 서버에서 음챗 생성기를 만들어요.",
+        checks=[is_server_enabled],
+    )
+    @commands.has_permissions(manage_guild=True)
+    @commands.max_concurrency(1, commands.BucketType.guild)
+    @commands.guild_only()
+    async def voice_create_create(self, ctx, name: Option(str, "생성될 채널 이름을 입력해요. {{유저이름}}, {{유저태그}}를 사용할 수 있어요. 기본 설정값은 '{{유저이름}}님의 채널'이에요.", required=False, name="이름"), channel: Option(discord.VoiceChannel, "생성기를 진행할 채널을 입력해주세요.", required=False, name="채널")):
+        await ctx.defer()
+        if channel is not None and (await VOICE_GENERATOR_DB.channel_search(ctx.guild.id, channel.id)) is not None:
+            embed=Embed.error(
+                timestamp=datetime.datetime.now(),
+                description="이미 생성기가 존재하는 채널이에요. 다른 채널을 선택해주세요.",
+            )
+            Embed.user_footer(embed, ctx.author)
+            return await ctx.respond(embed=embed)
+        if channel is None:
+            category = await ctx.guild.create_category_channel(name="음챗 생성기")
+            channel = await category.create_voice_channel(name="여기를 눌러 음챗 생성하기")
+
+        if name is None:
+            name = "{{유저이름}}님의 채널"
+
+        await VOICE_GENERATOR_DB.channel_add(ctx.guild.id, channel.id, name)
+
+        embed=Embed.default(
+            timestamp=datetime.datetime.now(),
+            title="✅ 음챗 생성기 생성 완료",
+            description=f"이제부터 {channel.mention} 채널에 접속하면 해당 채널의 카테고리에 음성 채널이 생성돼요!",
+        )
+        Embed.user_footer(embed, ctx.author)
+        await ctx.respond(embed=embed)
     # user_perm = voice_control.create_subgroup("유저", "음챗의 유저 권한 관리 기능이에요.")
 
 
